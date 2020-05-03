@@ -9,10 +9,10 @@ The idea is to be able to control the servo motor. First, a servo object was cre
 
 # ESP8266
 To communicate with the webpage, the ESP8266 has to be connected to the same network as the computer hosting the webpage.A first test was made to toggle a led connected to the ESP8266 through the webpage.
-A second test was conducted to record the sytem voltage.
+A second test was conducted to record the sytem voltage.The codes are in the folder ESP8266.
 
 # To do
 1. To link all these individual pieces of code.
-2. To make sure the web page is no longer local.
+2. To make sure the web page is no longer local and display the battery percentage.
 3. To assemble all the hardware and test for responsiveness.
  
