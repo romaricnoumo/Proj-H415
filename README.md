@@ -5,7 +5,7 @@
 
 
 # Servo Motor
-The motor is made to turn rotate in the clockwise/anti clockwise direction by varying its position. For a particular direction, it is delayed for 15ms.
+The idea is to be able to control the servo motor. First, a servo object was created to control this. Then a position is initialized to store the motor position. Pin 9 of the microcontroller is attached to the servo object to get the the motor position. In the main loop, two for loops are written. The first one for the foward rotation(0° to 180°-clockwise direction) and the other loop(180° to 0°- Anti-clockwise direction).
 
 # NodeMCU
 
