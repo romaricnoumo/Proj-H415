@@ -7,7 +7,7 @@ The Project consist in implemeting an automatic lift controller that can be acce
 # Servo Motor
 The idea is to be able to control the servo motor. First, a servo object was created to control this. Then a position is initialized to store the motor position. Pin 9 of the microcontroller is attached to the servo object to get the the motor position. In the main loop, two for loops are written. The first one for the foward rotation(0° to 180°-clockwise direction) and the other loop(180° to 0°- Anti-clockwise direction).
 
-# ESP8266MOD
+# ESP8266
 
 
 # To do
