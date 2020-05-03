@@ -1,5 +1,5 @@
 # Proj-H415
-
+The project is about opening automatically the lift in a building from an office. The user should be able access the webpage associated to the lift and to command the lift from where he is. Also, the user should be able to view on the webpage the sate of the batterry which enables him to know when to charge the battery in order to avoid discharge.
 
 # Webpage
 
