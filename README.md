@@ -5,7 +5,7 @@
 
 
 # Servo Motor
-
+The motor was
 
 # NodeMCU
 
