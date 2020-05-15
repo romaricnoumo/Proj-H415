@@ -1,3 +1,8 @@
+HELLO STUDENTS
+PLEASE JOIN 
+https://hangouts.google.com/call/DvUkrd5HsLrrUEOyMLewACEI
+
+
 # Proj-H415
 The project consist in implemeting an automatic lift controller that can be accessed through a web page. The user should be able access the webpage associated to the lift and to call the lift from where he is. To achieve this,We use a WIFI connected micontroller that can establish TCP/IP connections acts as a server which host the web page. The ESP8266 is also connected to a servo motor. When the motor is activated by the ESP8266,an actuator pushes the call button of the lift and after a certain amount of time predefined by us it moves back to its original position.  Also, the user should be able to view on the webpage the state of the batterry which enables him to know when to charge the battery in order to avoid discharge.
 
