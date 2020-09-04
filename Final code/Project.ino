@@ -1,8 +1,7 @@
 
 
 #include <ESP8266WiFi.h>
-#include<servo.h>
-
+#include<Servo.h>
 
 
 Servo myservo;  // create servo object to control a servo
@@ -20,6 +19,8 @@ String message2="";
 String batterystate="";
 float state=0;
 int state2=0;
+// Variable to store the HTTP request
+String header;
 
 
 void setup() 
@@ -45,6 +46,8 @@ Serial.print(".");
 }
 Serial.println("");
 Serial.println("WiFi connected");
+Serial.println("IP address: ");
+Serial.println(WiFi.localIP());
 
 // Start the server
 ESPserver.begin();
@@ -61,55 +64,63 @@ client1.stop();
 
 }
 
+
 void loop() 
 {
 
-message=""; 
-// Check if a client has connected
+
 WiFiClient client = ESPserver.available();
-if (!client) 
-{
-return;
+ 
+if (client) { // If a new client connects,
+Serial.println("New Client."); // print a message out in the serial port
+String currentLine = ""; // make a String to hold incoming data
+while (client.connected()) { // loop while the client's connected
+if (client.available()) { // if there's bytes to read
+char c = client.read(); // read a byte, then
+Serial.write(c); // print it out the serial monitor
+header += c;
+if (c == '\n') {
+   if (currentLine.length() == 0) {
+    BattState();
+    UpdateMess();
+    Response(client,header);     
+    break;
+  } else { // if you got a newline, then clear currentLine
+    currentLine = "";
+     }
+  
+} else if (c != '\r') { // if you got anything else but a carriage return character,
+currentLine += c; // add it to the end of the currentLine
 }
+} 
+   }
+// Clear the header variable
+header = "";
+// Close the connection
+client.stop();
+Serial.println("Client disconnected.");
+Serial.println(""); 
+myFunction();
 
-// New Client
-Serial.println("new client");
-String request = client.readStringUntil('\r');
-Serial.println(request);
-
-if(request=="GET / HTTP/1.1"){
- BattState();
- UpdateMess();
- message="";
- client.flush();
- Response( client,message);
+  }  
  
 }
-else if (request== "GET /CALL HTTP/1.1")
-{
 
-BattState();
-UpdateMess();
-myFunction();
-message="The Lift has been called!";
-client.flush();
-Response( client,message);
-}
-}
 
 void myFunction(){
-  
-digitalWrite(ledPin, !digitalRead(ledPin));
 
+  message="The Lift has  just been called!";
+  
   for (pos = 0; pos <= 180; pos += 1) { // goes from 0 degrees to 180 degrees:foward rotation
   // in steps of 1 degree
   myservo.write(pos);              // tell servo to go to position in variable 'pos'
-  delay(15);                     // waits 15ms for the servo to reach the position
+  delay(20);                     // waits for the servo to reach the position
   }
   for (pos = 180; pos >= 0; pos -= 1) { // goes from 180 degrees to 0 degrees: reverse rotation
   myservo.write(pos);              // tell servo to go to position in variable 'pos'
-  delay(15);                       // waits 15ms for the servo to reach the position
+  delay(20);                       // waits  for the servo to reach the position
   }
+  message="";
 }
   
 void BattState(){
@@ -118,7 +129,7 @@ batterystate=ESP.getVcc();
 state2=batterystate.toInt();
 //compute the battery voltage in percent
 //3OOmv for compensation due to onboard voltage divider on ESP8266
-state= (( (float)state2 + 300.0)/3300.0)*100.0 ;
+state= ( (float)state2 + 300.0) ;
 state2=round(state);
 batterystate=String(state2);
 }
@@ -126,34 +137,47 @@ batterystate=String(state2);
 //Display message when Battery Low
 
 void UpdateMess(){
- if(state2<=20){
+ if(state2<=1800){
 
- message2=", Battery Low ! Please recharge.";
+ message2=" Low ! Please recharge.";
  
  }
+ else
+
+ message2=" OK.";
 }
 
+
 //Response to send to browser
-void Response(WiFiClient client,String mess ){
-  
+void Response(WiFiClient client,String header ){
+
+ 
 client.println("HTTP/1.1 200 OK");
 client.println("Content-Type: text/html");
+client.println("Connection: close");
 client.println(""); //  IMPORTANT
 
+ if (header.indexOf("GET /CALL") >= 0) {
+     message="The Lift has been called!";
+     digitalWrite(ledPin, !digitalRead(ledPin));         
+ }
+
+               
 //Display webpage
 
 client.println("<!DOCTYPE HTML>");
 client.println("<html>");
 client.println("<head>");
+client.println("<link rel=\"icon\" href=\"data:,\">");
 client.println("<title>Lift Caller</title>");
 client.println("</head>");
 client.println("<body>");
 client.println("<h1 style=""text-align:center"">Welcome !! </h1>");
-client.println("<h2>  Battery State: "+batterystate+" %"+message2+"</h2>");
+client.println("<h2>  Battery State: " +message2+"</h2>");
 client.println("<p>Please Click on the link below to call the Lift.</p>");
 client.println("Click <a href=\"/CALL\">here</a>");
-client.println("<p>"+mess+"</p>");
+client.println("<p>"+message+"</p>");
 client.println("</body>");
 client.println("</html>");
-delay(1);
+client.println();
 }
